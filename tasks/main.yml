@@ -1,21 +1,29 @@
 ---
 - name: Test to see if nodes already joined to cluster
-  ansible.builtin.shell: ls /etc/kubernetes
+  ansible.builtin.command: ls /etc/kubernetes
+  changed_when: false
   register: kubedirtest
   tags: kubedirtest
 
 - name: Generate join token
-  ansible.builtin.shell: kubeadm token create --print-join-command
+  ansible.builtin.command: kubeadm token create --print-join-command
+  changed_when: false
   register: kubeadm_join_cmd
   delegate_to: "{{ groups.k8s_master[0] }}"
 
-- ansible.builtin.set_fact:
+- name: Set kubeadm_join variable content
+  ansible.builtin.set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
+  changed_when: false
 
-- name: Store join command
-  action: copy content="{{ kubeadm_join }}" dest="/etc/kubernetes/kubeadm-join.command"
+- name: Store init output
+  ansible.builtin.copy:
+    content: "{{ kubeadm_join }}"
+    dest: "/etc/kubernetes/kubeadm-join.command"
+    mode: '644'
+  tags: kubeconfig
 
 - name: Run kubeadm join
-  ansible.builtin.shell: "{{ kubeadm_join }} --ignore-preflight-errors=swap"
+  ansible.builtin.command: "{{ kubeadm_join }} --ignore-preflight-errors=swap"
   when: "'pki' not in kubedirtest.stdout"
   tags: kubedirtest
