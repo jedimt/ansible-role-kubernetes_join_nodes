@@ -1,5 +1,6 @@
 galaxy_info:
-  author: Aaron Patten
+  author: jedimt
+  role_name: kubernetes_join_nodes
   description: Join nodes to existing Kubernetes cluster
 
   license: MIT
@@ -13,7 +14,8 @@ galaxy_info:
         - xenial
         - jammy
 
-  galaxy_tags: 
+  galaxy_tags:
     - kubernetes
 
-dependencies: []
+dependencies:
+  - role: kubernetes_prep
