@@ -17,5 +17,5 @@ galaxy_info:
   galaxy_tags:
     - kubernetes
 
-dependencies:
-  - role: jedimt.kubernetes_prep
+# dependencies:
+#   - role: ansible-role-kubernetes-prep
