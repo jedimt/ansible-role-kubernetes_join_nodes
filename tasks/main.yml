@@ -3,6 +3,7 @@
   ansible.builtin.command: ls /etc/kubernetes
   changed_when: false
   register: kubedirtest
+  failed_when: kubedirtest.rc > 2
   tags: kubedirtest
 
 - name: Generate join token
@@ -10,20 +11,15 @@
   changed_when: false
   register: kubeadm_join_cmd
   delegate_to: "{{ groups.k8s_master[0] }}"
+  run_once: true
 
 - name: Set kubeadm_join variable content
   ansible.builtin.set_fact:
     kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
   changed_when: false
 
-- name: Store init output
-  ansible.builtin.copy:
-    content: "{{ kubeadm_join }}"
-    dest: "/etc/kubernetes/kubeadm-join.command"
-    mode: '644'
-  tags: kubeconfig
-
 - name: Run kubeadm join
-  ansible.builtin.command: "{{ kubeadm_join }} --ignore-preflight-errors=swap"
+  ansible.builtin.command: "{{ kubeadm_join }}"
   when: "'pki' not in kubedirtest.stdout"
+  changed_when: true
   tags: kubedirtest
