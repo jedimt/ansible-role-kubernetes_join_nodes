@@ -16,7 +16,7 @@ None
 Dependencies
 ------------
 
-This playbook depends on the `ansible-role-kubernetes-prep` role having been executed on the hosts prior to running
+This playbook depends on the `jedimt.kubernetes_prep` role having been executed on the hosts prior to running
 and that an existing Kubernetes cluster is available.
 
 Example Playbook
@@ -26,15 +26,15 @@ Example Playbook
     # Join nodes to Kubernetes cluster
     # ===========================================================================
     - name: Join Kubernetes nodes to cluster
-    hosts: k8s_nodes
-    tags: play_k8s_nodes
+      hosts: k8s_nodes
+      tags: play_k8s_nodes
 
-    vars_files:
+      vars_files:
         # Ansible vault with all required passwords
         - "../../credentials.yml"
 
-    roles:
-        - ansible-role-kubernetes-join-nodes
+      roles:
+        - jedimt.kubernetes_join_nodes
 
 License
 -------
